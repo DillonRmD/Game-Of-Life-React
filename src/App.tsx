@@ -24,10 +24,11 @@ const App = () => {
     setGrid(newGrid);
   }
 
-  function userChangeGridValue(rowIndex: number, colIndex: number, value: number){
+  function userChangeGridValue(rowIndex: number, colIndex: number){
     if(gameStarted == true)
       return;
-    
+
+    const value = grid[rowIndex][colIndex] == 1 ? 0 : 1;
     setGridValue(rowIndex, colIndex, value);
   }
 
@@ -49,7 +50,7 @@ const App = () => {
         {grid.map((row, rowIndex) => (
           <div key={rowIndex} className="row">
             {row.map((value, colIndex) => (
-              <div key={colIndex} className="cell" onClick={() => userChangeGridValue(rowIndex, colIndex, 1)}>{value}</div>
+              <div key={colIndex} className="cell" onClick={() => userChangeGridValue(rowIndex, colIndex)} >{value}</div>
             ))}
           </div>
         ))}
