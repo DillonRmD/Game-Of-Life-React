@@ -13,4 +13,13 @@
 
 .cell{
   cursor: pointer;
+  border: 1px solid black;
+}
+
+.cell-alive{
+  background-color: green;
+}
+
+.cell-dead{
+  background-color: red;
 }
