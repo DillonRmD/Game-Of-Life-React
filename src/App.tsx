@@ -65,6 +65,7 @@ const App = () => {
                     colIndex < grid[0].length;
                     colIndex++
                 ) {
+
                     let aliveNeighborCount: number = 0;
                     console.log("Alive Count", aliveNeighborCount);
 
@@ -142,9 +143,7 @@ const App = () => {
                     }
                 }
             }
-            console.log("Before Promise");
             await sleep(gameSpeed);
-            console.log("After Promise");
             setCurrentGeneration(currentGeneration + 1);
         }
     }
@@ -174,7 +173,7 @@ const App = () => {
                                     userChangeGridValue(rowIndex, colIndex)
                                 }
                             >
-                                {value}
+                                -
                             </div>
                         ))}
                     </div>
