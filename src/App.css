@@ -5,6 +5,8 @@
 .grid{
   display:grid;
   grid-template-columns: repeat(9, 1fr);
+  margin-left: 5%;
+  margin-right: 5%; 
 }
 
 .row{

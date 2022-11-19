@@ -14,14 +14,11 @@ const App = () => {
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]);
 
-    const [gameStarted, setGameStarted] = useState<boolean>(false);
-    useEffect(() => {
-        if (gameStarted === true) startGame();
-    }, [gameStarted]);
-
-    const [gameText, setGameText] = useState<string>("Start Game");
-    const [gameSpeed, setGameSpeed] = useState<number>(1);
     const [currentGeneration, setCurrentGeneration] = useState<number>(1);
+    useEffect(() => {
+        if(currentGeneration < 1)
+            setCurrentGeneration(1);
+    }, [currentGeneration]);
 
     function setGridValue(rowIndex: number, colIndex: number, value: number) {
         //spread operator to set the reference of the grid to newGrid so we can acutally get the state to catch the change
@@ -31,43 +28,19 @@ const App = () => {
     }
 
     function userChangeGridValue(rowIndex: number, colIndex: number) {
-        if (gameStarted === true) return;
-
         //if the value of the current spot on the grid is one then assign a 0 otherwise a 1
         const value = grid[rowIndex][colIndex] === 1 ? 0 : 1;
         setGridValue(rowIndex, colIndex, value);
     }
 
-    function startGamePressed() {
-        if (gameStarted === true) {
-            console.log("Game Started Pressed - Setting to False");
-            setGameText("Start Game");
-            setGameStarted(false);
-        } else if (gameStarted === false) {
-            console.log("Game Started Pressed - Setting to True");
-            setGameText("Stop Game");
-            setGameStarted(true);
-        }
-    }
-
-    function sleep(seconds: number) {
-        return new Promise((r) => setTimeout(r, seconds * 1000));
-    }
-
-    async function startGame() {
-        console.log(`Entered ${gameStarted}`);
-        console.log("Game Started");
-
-        while (gameStarted === true) {
+    function nextGeneration() {
             for (let rowIndex: number = 0; rowIndex < grid.length; rowIndex++) {
                 for (
                     let colIndex: number = 0;
                     colIndex < grid[0].length;
                     colIndex++
                 ) {
-
                     let aliveNeighborCount: number = 0;
-                    console.log("Alive Count", aliveNeighborCount);
 
                     //right
                     if (
@@ -143,22 +116,15 @@ const App = () => {
                     }
                 }
             }
-            await sleep(gameSpeed);
+
             setCurrentGeneration(currentGeneration + 1);
-        }
     }
 
     return (
-        <div className="App">
-            <button onClick={startGamePressed} id="">
-                {gameText}
+        <div className="App">            
+            <button onClick={() => nextGeneration()} id="">
+                Next Generation
             </button>
-            <input
-                type="number"
-                placeholder="Game Speed (in seconds)"
-                value={gameSpeed}
-                onChange={(e) => setGameSpeed(parseInt(e.target.value) || 1)}
-            ></input>
             <h1>Current Generation: {currentGeneration}</h1>
             <div className="grid">
                 {grid.map((row, rowIndex) => (
@@ -173,7 +139,7 @@ const App = () => {
                                     userChangeGridValue(rowIndex, colIndex)
                                 }
                             >
-                                -
+                                {value}
                             </div>
                         ))}
                     </div>
