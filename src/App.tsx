@@ -120,8 +120,24 @@ const App = () => {
             setCurrentGeneration(currentGeneration + 1);
     }
 
+    function prevGeneration(){
+
+        
+
+        setCurrentGeneration(currentGeneration - 1);
+    }
+
     return (
-        <div className="App">            
+        <div className="App">      
+            {
+                currentGeneration > 1 ?
+                <button onClick={() => prevGeneration()} id ="">
+                Previous Generation
+                </button>
+                :
+                null
+            }      
+            
             <button onClick={() => nextGeneration()} id="">
                 Next Generation
             </button>
