@@ -20,8 +20,10 @@
 
 .cell-alive{
   background-color: green;
+  color: green;
 }
 
 .cell-dead{
   background-color: red;
+  color:red;
 }
