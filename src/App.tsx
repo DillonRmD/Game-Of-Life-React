@@ -14,6 +14,8 @@ const App = () => {
         [0, 0, 0, 0, 0, 0, 0, 0, 0],
     ]);
 
+    const [history, setHistory] = useState<Record<number, number[][]>>({});
+
     const [currentGeneration, setCurrentGeneration] = useState<number>(1);
     useEffect(() => {
         if(currentGeneration < 1)
@@ -117,12 +119,28 @@ const App = () => {
                 }
             }
 
+            debugger;
+            let h = history;
+            h[currentGeneration] = grid;
+            setHistory(h);
+            //history[currentGeneration] = grid;
             setCurrentGeneration(currentGeneration + 1);
     }
 
     function prevGeneration(){
-
-        
+        for (let rowIndex: number = 0; rowIndex < grid.length; rowIndex++) {
+            for (
+                let colIndex: number = 0;
+                colIndex < grid[0].length;
+                colIndex++
+            ) 
+            {
+                debugger;
+                let previousGrid = history[currentGeneration - 1];
+                setGridValue(rowIndex, colIndex, previousGrid[rowIndex][colIndex]);
+                return;
+            }
+        }
 
         setCurrentGeneration(currentGeneration - 1);
     }
