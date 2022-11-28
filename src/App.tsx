@@ -5,6 +5,11 @@ interface IGrid {
     elements: number[][];
 }
 
+interface IStats{
+    currentAlive: number;
+    currentDead: number;
+}
+
 const App = () => {
     function createGrid() {
         let grid = {
@@ -23,19 +28,48 @@ const App = () => {
         return grid;
     }
 
-    const [grid, setGrid] = useState<IGrid>(createGrid());
-    const [history, setHistory] = useState<IGrid[]>([]);
+    function createStats(){
+        let stats: IStats = {
+            currentAlive: 0,
+            currentDead: 0,
+        };
+        return stats;
+    }
 
+    const [grid, setGrid] = useState<IGrid>(createGrid());
+    const [stats, setStats] = useState<IStats>(createStats());
+    const [history, setHistory] = useState<IGrid[]>([]);
     const [currentGeneration, setCurrentGeneration] = useState<number>(1);
     useEffect(() => {
         if (currentGeneration < 1) setCurrentGeneration(1);
     }, [currentGeneration]);
+
+    function updateStats(currGrid: IGrid){
+        let result: IStats = {
+            currentAlive: 0,
+            currentDead: 0,
+        };
+
+        for(const row of currGrid.elements)
+        {
+            for(const val of row)
+            {
+                if(val === 1)
+                    result.currentAlive += 1;
+                else if(val === 0)
+                    result.currentDead += 1;
+            }
+        }
+
+        return result;
+    }
 
     function setGridValue(rowIndex: number, colIndex: number, value: number) {
         //spread operator to set the reference of the grid to newGrid so we can acutally get the state to catch the change
         const newGrid = createGrid();
         newGrid.elements = [...grid.elements];
         newGrid.elements[rowIndex][colIndex] = value;
+        setStats(updateStats(newGrid));
         setGrid(newGrid);
     }
 
@@ -144,16 +178,11 @@ const App = () => {
 
     return (
         <div className="App">
-            {currentGeneration > 1 ? (
-                <button onClick={() => prevGeneration()} id="">
-                    Previous Generation
-                </button>
-            ) : null}
-
-            <button onClick={() => nextGeneration()} id="">
-                Next Generation
-            </button>
+            
             <h1>Current Generation: {currentGeneration}</h1>
+            <h2>Stats: </h2>
+            <h3>Alive Cells: {stats.currentAlive} </h3>
+            <h3>Dead Cells: {stats.currentDead}</h3>
             <div className="grid">
                 {grid.elements.map((row, rowIndex) => (
                     <div key={rowIndex} className="row">
@@ -173,6 +202,15 @@ const App = () => {
                     </div>
                 ))}
             </div>
+            {currentGeneration > 1 ? (
+                <button onClick={() => prevGeneration()} id="">
+                    Previous Generation
+                </button>
+            ) : null}
+
+            <button onClick={() => nextGeneration()} id="">
+                Next Generation
+            </button>
         </div>
     );
 };
