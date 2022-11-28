@@ -46,6 +46,13 @@ const App = () => {
     }
 
     function nextGeneration() {
+        
+        const h: IGrid = createGrid();
+        h.elements = JSON.parse(JSON.stringify(grid.elements));
+        const hist = [...history];
+        hist[currentGeneration - 1] = h;
+        setHistory(hist);
+
         for (let rowIndex: number = 0; rowIndex < grid.elements.length; rowIndex++) {
             for (
                 let colIndex: number = 0;
@@ -126,28 +133,12 @@ const App = () => {
             }
         }
 
-        setHistory(oldHistory => [...oldHistory, grid]);
         setCurrentGeneration(currentGeneration + 1);
     }
 
     function prevGeneration() {
-        for (let rowIndex: number = 0; rowIndex < grid.elements.length; rowIndex++) {
-            for (
-                let colIndex: number = 0;
-                colIndex < grid.elements[0].length;
-                colIndex++
-            ) {
-                
-                let previousGrid = history[currentGeneration - 2];
-                setGridValue(
-                    rowIndex,
-                    colIndex,
-                    previousGrid.elements[rowIndex][colIndex]
-                );
-                return;
-            }
-        }
-
+        let previousGrid = history[currentGeneration - 2];
+        setGrid(JSON.parse(JSON.stringify(previousGrid)));
         setCurrentGeneration(currentGeneration - 1);
     }
 
