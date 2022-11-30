@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "@mui/material";
+import { Button, Slider } from "@mui/material";
+import { Stack } from "@mui/system";
 
 import "./App.css";
 
@@ -13,19 +14,58 @@ interface IStats {
 }
 
 const App = () => {
+    const [gridWidth, setGridWidth] = useState<number>(9);
+    useEffect(() => {
+        resizeGridWidth();
+    }, [gridWidth]);
+    const [gridHeight, setGridHeight] = useState<number>(9);
+    useEffect(() => {
+        resizeGridHeight();
+    }, [gridHeight]);
+    const [grid, setGrid] = useState<IGrid>(createGrid());
+    const [stats, setStats] = useState<IStats>(createStats());
+    const [history, setHistory] = useState<IGrid[]>([]);
+    const [currentGeneration, setCurrentGeneration] = useState<number>(1);
+    useEffect(() => {
+        if (currentGeneration < 1) setCurrentGeneration(1);
+    }, [currentGeneration]);
+
+    function resizeGridWidth() {
+        let currentWidth: number = grid.elements.length;
+        let diff = currentWidth - gridWidth;
+
+        let g = grid;
+
+        if (diff > 0) {
+            while (diff-- > 0) {
+                g.elements.pop();
+            }
+        } else if (diff < 0) {
+            while (diff++ < 0) {
+                g.elements.push(new Array(gridWidth).fill(0));
+            }
+        }
+
+        setGrid(g);
+    }
+
+    function resizeGridHeight() {
+
+
+        
+    }
+
     function createGrid() {
+        let e: number[][] = [];
+        for (let ri = 0; ri < gridHeight; ri++) {
+            e.push([]);
+            for (let ci = 0; ci < gridWidth; ci++) {
+                e[ri].push(0);
+            }
+        }
+
         let grid = {
-            elements: [
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            ],
+            elements: e,
         };
         return grid;
     }
@@ -37,14 +77,6 @@ const App = () => {
         };
         return stats;
     }
-
-    const [grid, setGrid] = useState<IGrid>(createGrid());
-    const [stats, setStats] = useState<IStats>(createStats());
-    const [history, setHistory] = useState<IGrid[]>([]);
-    const [currentGeneration, setCurrentGeneration] = useState<number>(1);
-    useEffect(() => {
-        if (currentGeneration < 1) setCurrentGeneration(1);
-    }, [currentGeneration]);
 
     function updateStats(currGrid: IGrid) {
         let result: IStats = {
@@ -203,15 +235,15 @@ const App = () => {
                 ))}
             </div>
             <div className="button-arena">
-                    <Button
-                        variant="contained"
-                        onClick={() => prevGeneration()}
-                        id=""
-                        disabled={(currentGeneration > 1) === false}
-                    >
-                        Previous Generation
-                    </Button>
-                
+                <Button
+                    variant="contained"
+                    onClick={() => prevGeneration()}
+                    id=""
+                    disabled={currentGeneration > 1 === false}
+                >
+                    Previous Generation
+                </Button>
+
                 <Button
                     variant="contained"
                     onClick={() => nextGeneration()}
@@ -220,6 +252,41 @@ const App = () => {
                     Next Generation
                 </Button>
             </div>
+            <Stack direction="row" sx={{ mb: 1 }} justifyContent="space-around">
+                <Stack>
+                    <h3>Grid Width</h3>
+                    <Slider
+                        key="slider-width"
+                        aria-label="Width"
+                        value={gridWidth}
+                        min={1}
+                        max={20}
+                        valueLabelDisplay={"auto"}
+                        onChange={(e, val) =>
+                            Array.isArray(val)
+                                ? setGridWidth(val[0])
+                                : setGridWidth(val)
+                        }
+                    ></Slider>
+                </Stack>
+
+                <Stack>
+                    <h3>Grid Height</h3>
+                    <Slider
+                        key="slider-height"
+                        aria-label="Height"
+                        value={gridHeight}
+                        min={1}
+                        max={20}
+                        valueLabelDisplay={"auto"}
+                        onChange={(e, val) =>
+                            Array.isArray(val)
+                                ? setGridHeight(val[0])
+                                : setGridHeight(val)
+                        }
+                    ></Slider>
+                </Stack>
+            </Stack>
         </div>
     );
 };
