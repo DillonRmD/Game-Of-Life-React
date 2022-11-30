@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
+import { Button } from "@mui/material";
+
 import "./App.css";
 
 interface IGrid {
     elements: number[][];
 }
 
-interface IStats{
+interface IStats {
     currentAlive: number;
     currentDead: number;
 }
@@ -28,7 +30,7 @@ const App = () => {
         return grid;
     }
 
-    function createStats(){
+    function createStats() {
         let stats: IStats = {
             currentAlive: 0,
             currentDead: 0,
@@ -44,20 +46,16 @@ const App = () => {
         if (currentGeneration < 1) setCurrentGeneration(1);
     }, [currentGeneration]);
 
-    function updateStats(currGrid: IGrid){
+    function updateStats(currGrid: IGrid) {
         let result: IStats = {
             currentAlive: 0,
             currentDead: 0,
         };
 
-        for(const row of currGrid.elements)
-        {
-            for(const val of row)
-            {
-                if(val === 1)
-                    result.currentAlive += 1;
-                else if(val === 0)
-                    result.currentDead += 1;
+        for (const row of currGrid.elements) {
+            for (const val of row) {
+                if (val === 1) result.currentAlive += 1;
+                else if (val === 0) result.currentDead += 1;
             }
         }
 
@@ -80,14 +78,17 @@ const App = () => {
     }
 
     function nextGeneration() {
-        
         const h: IGrid = createGrid();
         h.elements = JSON.parse(JSON.stringify(grid.elements));
         const hist = [...history];
         hist[currentGeneration - 1] = h;
         setHistory(hist);
 
-        for (let rowIndex: number = 0; rowIndex < grid.elements.length; rowIndex++) {
+        for (
+            let rowIndex: number = 0;
+            rowIndex < grid.elements.length;
+            rowIndex++
+        ) {
             for (
                 let colIndex: number = 0;
                 colIndex < grid.elements[0].length;
@@ -178,7 +179,6 @@ const App = () => {
 
     return (
         <div className="App">
-            
             <h1>Current Generation: {currentGeneration}</h1>
             <h2>Stats: </h2>
             <h3>Alive Cells: {stats.currentAlive} </h3>
@@ -202,15 +202,24 @@ const App = () => {
                     </div>
                 ))}
             </div>
-            {currentGeneration > 1 ? (
-                <button onClick={() => prevGeneration()} id="">
-                    Previous Generation
-                </button>
-            ) : null}
-
-            <button onClick={() => nextGeneration()} id="">
-                Next Generation
-            </button>
+            <div className="button-arena">
+                    <Button
+                        variant="contained"
+                        onClick={() => prevGeneration()}
+                        id=""
+                        disabled={(currentGeneration > 1) === false}
+                    >
+                        Previous Generation
+                    </Button>
+                
+                <Button
+                    variant="contained"
+                    onClick={() => nextGeneration()}
+                    id=""
+                >
+                    Next Generation
+                </Button>
+            </div>
         </div>
     );
 };
