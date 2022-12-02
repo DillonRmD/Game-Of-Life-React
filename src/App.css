@@ -2,6 +2,10 @@
   text-align: center;
 }
 
+.App-text{
+  font-family: 'Roboto Mono', monospace;
+}
+
 .grid{
   display:grid;
   grid-template-columns: repeat(9, 1fr);
@@ -13,10 +17,6 @@
 .button-arena{
   padding-top: 2%;
   width: 100%;
-}
-
-.slider-arena{
-  
 }
 
 .cell{

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Slider } from "@mui/material";
-import { Stack } from "@mui/system";
+import { Button } from "@mui/material";
 
 import "./App.css";
 
@@ -14,52 +13,22 @@ interface IStats {
 }
 
 const App = () => {
-    const [gridWidth, setGridWidth] = useState<number>(9);
-    useEffect(() => {
-        resizeGridWidth();
-    }, [gridWidth]);
-    const [gridHeight, setGridHeight] = useState<number>(9);
-    useEffect(() => {
-        resizeGridHeight();
-    }, [gridHeight]);
-    const [grid, setGrid] = useState<IGrid>(createGrid());
     const [stats, setStats] = useState<IStats>(createStats());
+    const [grid, setGrid] = useState<IGrid>(createGrid());
+    useEffect(() => {
+        setStats(updateStats(grid));
+    }, [grid]);
     const [history, setHistory] = useState<IGrid[]>([]);
     const [currentGeneration, setCurrentGeneration] = useState<number>(1);
     useEffect(() => {
         if (currentGeneration < 1) setCurrentGeneration(1);
     }, [currentGeneration]);
 
-    function resizeGridWidth() {
-        let currentWidth: number = grid.elements.length;
-        let diff = currentWidth - gridWidth;
-
-        let g = grid;
-
-        if (diff > 0) {
-            while (diff-- > 0) {
-                g.elements.pop();
-            }
-        } else if (diff < 0) {
-            while (diff++ < 0) {
-                g.elements.push(new Array(gridWidth).fill(0));
-            }
-        }
-
-        setGrid(g);
-    }
-
-    function resizeGridHeight() {
-
-
-        
-    }
-
     function createGrid() {
         let e: number[][] = [];
-        for (let ri = 0; ri < gridHeight; ri++) {
+        for (let ri = 0; ri < 9; ri++) {
             e.push([]);
-            for (let ci = 0; ci < gridWidth; ci++) {
+            for (let ci = 0; ci < 9; ci++) {
                 e[ri].push(0);
             }
         }
@@ -211,10 +180,11 @@ const App = () => {
 
     return (
         <div className="App">
-            <h1>Current Generation: {currentGeneration}</h1>
-            <h2>Stats: </h2>
-            <h3>Alive Cells: {stats.currentAlive} </h3>
-            <h3>Dead Cells: {stats.currentDead}</h3>
+            <style> @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap'); </style>
+            <h1 className="App-text">Current Generation: {currentGeneration}</h1>
+            <h2 className="App-text">Stats: </h2>
+            <h3 className="App-text">Alive Cells: {stats.currentAlive} </h3>
+            <h3 className="App-text">Dead Cells: {stats.currentDead}</h3>
             <div className="grid">
                 {grid.elements.map((row, rowIndex) => (
                     <div key={rowIndex} className="row">
@@ -239,7 +209,7 @@ const App = () => {
                     variant="contained"
                     onClick={() => prevGeneration()}
                     id=""
-                    disabled={currentGeneration > 1 === false}
+                    disabled={(currentGeneration > 1) === false}
                 >
                     Previous Generation
                 </Button>
@@ -252,41 +222,6 @@ const App = () => {
                     Next Generation
                 </Button>
             </div>
-            <Stack direction="row" sx={{ mb: 1 }} justifyContent="space-around">
-                <Stack>
-                    <h3>Grid Width</h3>
-                    <Slider
-                        key="slider-width"
-                        aria-label="Width"
-                        value={gridWidth}
-                        min={1}
-                        max={20}
-                        valueLabelDisplay={"auto"}
-                        onChange={(e, val) =>
-                            Array.isArray(val)
-                                ? setGridWidth(val[0])
-                                : setGridWidth(val)
-                        }
-                    ></Slider>
-                </Stack>
-
-                <Stack>
-                    <h3>Grid Height</h3>
-                    <Slider
-                        key="slider-height"
-                        aria-label="Height"
-                        value={gridHeight}
-                        min={1}
-                        max={20}
-                        valueLabelDisplay={"auto"}
-                        onChange={(e, val) =>
-                            Array.isArray(val)
-                                ? setGridHeight(val[0])
-                                : setGridHeight(val)
-                        }
-                    ></Slider>
-                </Stack>
-            </Stack>
         </div>
     );
 };
