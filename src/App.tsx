@@ -1,34 +1,45 @@
 import React, { useEffect, useState } from "react";
+import { Button } from "@mui/material";
+
 import "./App.css";
 
 interface IGrid {
     elements: number[][];
 }
 
-interface IStats{
+interface IStats {
     currentAlive: number;
     currentDead: number;
 }
 
 const App = () => {
+    const [stats, setStats] = useState<IStats>(createStats());
+    const [grid, setGrid] = useState<IGrid>(createGrid());
+    useEffect(() => {
+        setStats(updateStats(grid));
+    }, [grid]);
+    const [history, setHistory] = useState<IGrid[]>([]);
+    const [currentGeneration, setCurrentGeneration] = useState<number>(1);
+    useEffect(() => {
+        if (currentGeneration < 1) setCurrentGeneration(1);
+    }, [currentGeneration]);
+
     function createGrid() {
+        let e: number[][] = [];
+        for (let ri = 0; ri < 9; ri++) {
+            e.push([]);
+            for (let ci = 0; ci < 9; ci++) {
+                e[ri].push(0);
+            }
+        }
+
         let grid = {
-            elements: [
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-                [0, 0, 0, 0, 0, 0, 0, 0, 0],
-            ],
+            elements: e,
         };
         return grid;
     }
 
-    function createStats(){
+    function createStats() {
         let stats: IStats = {
             currentAlive: 0,
             currentDead: 0,
@@ -36,28 +47,16 @@ const App = () => {
         return stats;
     }
 
-    const [grid, setGrid] = useState<IGrid>(createGrid());
-    const [stats, setStats] = useState<IStats>(createStats());
-    const [history, setHistory] = useState<IGrid[]>([]);
-    const [currentGeneration, setCurrentGeneration] = useState<number>(1);
-    useEffect(() => {
-        if (currentGeneration < 1) setCurrentGeneration(1);
-    }, [currentGeneration]);
-
-    function updateStats(currGrid: IGrid){
+    function updateStats(currGrid: IGrid) {
         let result: IStats = {
             currentAlive: 0,
             currentDead: 0,
         };
 
-        for(const row of currGrid.elements)
-        {
-            for(const val of row)
-            {
-                if(val === 1)
-                    result.currentAlive += 1;
-                else if(val === 0)
-                    result.currentDead += 1;
+        for (const row of currGrid.elements) {
+            for (const val of row) {
+                if (val === 1) result.currentAlive += 1;
+                else if (val === 0) result.currentDead += 1;
             }
         }
 
@@ -80,14 +79,17 @@ const App = () => {
     }
 
     function nextGeneration() {
-        
         const h: IGrid = createGrid();
         h.elements = JSON.parse(JSON.stringify(grid.elements));
         const hist = [...history];
         hist[currentGeneration - 1] = h;
         setHistory(hist);
 
-        for (let rowIndex: number = 0; rowIndex < grid.elements.length; rowIndex++) {
+        for (
+            let rowIndex: number = 0;
+            rowIndex < grid.elements.length;
+            rowIndex++
+        ) {
             for (
                 let colIndex: number = 0;
                 colIndex < grid.elements[0].length;
@@ -178,11 +180,11 @@ const App = () => {
 
     return (
         <div className="App">
-            
-            <h1>Current Generation: {currentGeneration}</h1>
-            <h2>Stats: </h2>
-            <h3>Alive Cells: {stats.currentAlive} </h3>
-            <h3>Dead Cells: {stats.currentDead}</h3>
+            <style> @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap'); </style>
+            <h1 className="App-text">Current Generation: {currentGeneration}</h1>
+            <h2 className="App-text">Stats: </h2>
+            <h3 className="App-text">Alive Cells: {stats.currentAlive} </h3>
+            <h3 className="App-text">Dead Cells: {stats.currentDead}</h3>
             <div className="grid">
                 {grid.elements.map((row, rowIndex) => (
                     <div key={rowIndex} className="row">
@@ -202,15 +204,24 @@ const App = () => {
                     </div>
                 ))}
             </div>
-            {currentGeneration > 1 ? (
-                <button onClick={() => prevGeneration()} id="">
+            <div className="button-arena">
+                <Button
+                    variant="contained"
+                    onClick={() => prevGeneration()}
+                    id=""
+                    disabled={(currentGeneration > 1) === false}
+                >
                     Previous Generation
-                </button>
-            ) : null}
+                </Button>
 
-            <button onClick={() => nextGeneration()} id="">
-                Next Generation
-            </button>
+                <Button
+                    variant="contained"
+                    onClick={() => nextGeneration()}
+                    id=""
+                >
+                    Next Generation
+                </Button>
+            </div>
         </div>
     );
 };
